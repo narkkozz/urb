@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Урбандалу</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: bright, graphic, confident — a city planning poster in daylight
+   IDEA: a metro map — every tab is a line, every fact a station
+   PICTURE: five coloured metro lines crossing at one interchange called «Қала»
+   COLOUR and TYPE: white paper, black ink, metro red / blue / yellow, green only for parks; Montserrat 900 + Inter
+   LAYOUT: line-coloured tab stations, one screen per tab, thick rules and colour blocks; print = one section per A4 page */
+:root{color-scheme:light;--bg:#fbfaf7;--ink:#121212;--mut:#5b5b5b;--line:#e4e1da;--red:#e5382a;--blue:#1d58d1;--yel:#ffc21a;--grn:#159a5b;--pur:#7a3fc4;--ok:#159a5b;--bad:#e5382a}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+h1,h2,h3,.big{font-family:Montserrat,Arial,sans-serif;font-weight:900;line-height:1.02;margin:0;text-wrap:balance}
+h2{font-size:clamp(30px,4.6vw,50px)}h3{font-size:20px;font-weight:800}
+p{margin:0 0 10px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:3px solid var(--ink)}
+.bar{display:flex;align-items:center;gap:14px;max-width:1240px;margin:auto;padding:8px max(3vw,12px)}
+.logo{font:900 18px Montserrat;flex:none;display:flex;align-items:center;gap:8px}
+.logo i{width:22px;height:22px;border-radius:50%;border:5px solid var(--ink);display:inline-block}
+nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1}
+nav a{flex:none;color:var(--ink);text-decoration:none;padding:9px 12px;border-radius:999px;font-weight:600;font-size:15px;min-height:44px;display:flex;align-items:center;gap:8px}
+nav a i{width:14px;height:14px;border-radius:50%;background:#fff;border:4px solid var(--c,#121212);flex:none}
+nav a.on{background:var(--c,#121212);color:#fff}nav a.on i{border-color:#fff}
+.pdf{flex:none;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:10px 16px;font:600 14px Inter;cursor:pointer;min-height:44px}
+a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+main{max-width:1240px;margin:auto;padding:clamp(18px,3.5vw,44px) max(3vw,14px) 90px}
+section{display:none}section.on{display:block;animation:in .45s ease-out}
+@keyframes in{from{opacity:0;transform:translateX(30px)}}
+.kicker{display:inline-flex;align-items:center;gap:10px;font:800 14px Montserrat;margin-bottom:12px}
+.kicker b{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--c);color:#fff;font-size:15px}
+.lead{color:var(--mut);font-size:17px;max-width:64ch;margin-top:12px}
+.cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(16px,2.6vw,32px);margin-top:22px;align-items:start}
+.box{background:#fff;border:2px solid var(--ink);border-radius:18px;padding:20px}
+.box.fill{background:var(--c);color:#fff;border-color:var(--c)}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.num{border-top:6px solid var(--c,#121212);padding-top:10px}
+.num .big{font-size:clamp(36px,5vw,54px)}.num .big small{font-size:.42em;margin-left:4px}
+.num span{display:block;color:var(--mut);font-size:14px;margin-top:4px}
+.src{color:var(--mut);font-size:12.5px;margin-top:18px;border-top:1px solid var(--line);padding-top:10px}
+.row{margin:12px 0}.row div{display:flex;justify-content:space-between;gap:10px;font-size:15px;margin-bottom:5px}
+.track{height:16px;background:#eeebe4;border-radius:999px;overflow:hidden;position:relative}
+.fillbar{height:100%;background:var(--c,#121212);border-radius:999px}
+.range{position:absolute;top:0;bottom:0;background:var(--c);border-radius:999px}
+.split{display:flex;height:64px;border-radius:14px;overflow:hidden;border:2px solid var(--ink);margin:14px 0 8px}
+.split div{display:flex;flex-direction:column;justify-content:center;padding:0 12px;color:#fff;font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden}
+.split div b{font:900 22px Montserrat}
+.stops{list-style:none;padding:0;margin:14px 0;position:relative}
+.stops::before{content:"";position:absolute;left:10px;top:8px;bottom:8px;width:6px;background:var(--c,#121212);border-radius:3px}
+.stops li{position:relative;padding:6px 0 10px 38px}
+.stops li::before{content:"";position:absolute;left:3px;top:9px;width:20px;height:20px;border-radius:50%;background:#fff;border:5px solid var(--c,#121212);box-sizing:border-box}
+.stops li b{font-family:Montserrat;font-weight:800}
+.cards3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:22px}
+.tcard{border:2px solid var(--ink);border-radius:18px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.tcard .hd{background:var(--c);color:#fff;padding:16px 18px}
+.tcard .hd h3{font-size:22px}.tcard .hd p{margin:6px 0 0;font-size:14px;opacity:.92}
+.tcard svg{display:block;width:100%;height:auto;background:#f3f1ec}
+.tcard .vs{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--ink);flex:1}
+.tcard .vs div{padding:12px 14px;font-size:14px}.tcard .vs div+div{border-left:2px solid var(--ink)}
+.tcard .vs b{display:block;font:800 12px Montserrat;margin-bottom:4px}
+.pcard{border:2px solid var(--ink);border-radius:18px;padding:18px;background:#fff}
+.pcard .tag{display:inline-block;background:var(--c);color:#fff;font:800 12px Montserrat;border-radius:999px;padding:4px 10px;margin-bottom:10px}
+.pcard p{color:var(--mut);font-size:15px;margin:6px 0 0}
+.chart svg{width:100%;height:auto;display:block}
+.final{margin-top:18px;background:var(--ink);color:#fff;border-radius:18px;padding:22px 24px;font-size:19px}
+.final b{font-family:Montserrat;font-weight:900;color:var(--yel)}
+/* hero */
+.hero.on{display:grid;gap:8px}
+.hero h1{font-size:clamp(54px,11.5vw,150px);letter-spacing:-2px}
+.hero .sub{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:end}
+.hero .map{border:3px solid var(--ink);border-radius:22px;background:#fff;overflow:hidden}
+.hero .map svg{display:block;width:100%;height:auto}
+.trainmv{animation:ride 7s linear infinite}
+@keyframes ride{to{stroke-dashoffset:-400}}
+.cta{display:inline-flex;align-items:center;justify-content:center;background:var(--red);color:#fff;border:0;border-radius:999px;padding:14px 26px;font:700 16px Inter;cursor:pointer;min-height:48px;text-decoration:none}
+.cta.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink)}
+/* games */
+.gtabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.gtabs button{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:9px 16px;font:600 15px Inter;cursor:pointer;min-height:44px}
+.gtabs button.on{background:var(--ink);color:#fff}
+.game{display:none}.game.on{display:block}
+.gbox{background:#fff;border:2px solid var(--ink);border-radius:20px;padding:clamp(16px,3vw,28px);max-width:860px}
+.ghead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--mut);font-size:14px;margin-bottom:14px}
+.pill{background:var(--yel);color:var(--ink);border-radius:999px;padding:6px 12px;font-weight:700;white-space:nowrap}
+.q{font:800 clamp(19px,2.4vw,25px)/1.25 Montserrat;margin-bottom:16px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.opt,.mi{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:14px;padding:13px;text-align:left;font:500 16px Inter;cursor:pointer;min-height:54px}
+.opt:hover{background:#f3f1ec}.opt.good,.mi.done{background:#dff3e8;border-color:var(--ok)}.opt.wrong,.mi.err{background:#fde3e0;border-color:var(--bad)}.opt[disabled]{cursor:default}
+.mi.sel{background:var(--yel)}.mi.done{cursor:default}
+.msg{min-height:28px;margin-top:14px;font-weight:700}
+.timer{height:10px;background:#eeebe4;border-radius:6px;overflow:hidden;margin-bottom:16px}.timer i{display:block;height:100%;background:var(--red);width:100%;transition:width .25s linear}
+.tf{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.tf button{border:0;border-radius:16px;padding:20px;font:900 22px Montserrat;cursor:pointer;color:#fff;min-height:70px}
+.tf .t{background:var(--grn)}.tf .f{background:var(--red)}
+.stmt{min-height:96px;font:800 clamp(19px,2.4vw,25px)/1.25 Montserrat;display:flex;align-items:center}
+.match{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:12px}.match .col{display:grid;gap:8px;align-content:start}
+.pager{position:fixed;right:max(2vw,12px);bottom:16px;display:flex;gap:8px;z-index:6}
+.pager button{width:50px;height:50px;border-radius:50%;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;display:grid;place-items:center}.pager svg{width:20px;height:20px}
+.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;display:none;z-index:9;max-width:90vw}
+.printonly{display:none}
+@media(max-width:860px){.cols{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.logo span{display:none}.match{grid-template-columns:1fr}.split div{font-size:11px;padding:0 6px}.split div b{font-size:16px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@page{size:338.67mm 190.5mm;margin:9mm 12mm}
+@media print{
+  body{background:#fff;font-size:13px}
+  header,.pager,.toast,#oiyn,.cta,.pdf{display:none!important}
+  main{padding:0;max-width:none}
+  section{display:block!important;animation:none!important;break-after:page;page-break-after:always}
+  section:last-of-type{break-after:auto}
+  h2{font-size:30px}.lead{font-size:14px;margin-top:6px}
+  .cols,.cards3{margin-top:12px;gap:14px}.cards3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cols{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+  .box,.pcard{padding:14px}.num .big{font-size:34px}
+  .hero h1{font-size:110px}.printonly{display:block}
+  .box,.tcard,.pcard,.final{break-inside:avoid}
+  #home{zoom:.8}#dengei{zoom:.88}#aglo{zoom:1}#urdis{zoom:.82}#masele{zoom:.8}#shesh{zoom:.9}
+  .aw{display:grid;grid-template-columns:1.15fr 1fr 1fr 1fr;gap:14px;margin-top:12px}.aw .cols{display:contents}
+  #aglo .lead{font-size:13px}
+  .src{margin-top:8px}
+}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div class="logo"><i></i><span>Урбандалу</span></div>
+  <nav id="nav">
+    <a href="#home" style="--c:#121212"><i></i>Басты</a>
+    <a href="#dengei" style="--c:#e5382a"><i></i>1 · Деңгей</a>
+    <a href="#aglo" style="--c:#1d58d1"><i></i>2 · Агломерация</a>
+    <a href="#urdis" style="--c:#7a3fc4"><i></i>3 · Үрдістер</a>
+    <a href="#masele" style="--c:#e5382a"><i></i>4 · Мәселелер</a>
+    <a href="#shesh" style="--c:#159a5b"><i></i>5 · Шешімдер</a>
+    <a href="#oiyn" style="--c:#121212"><i></i>Ойындар</a>
+  </nav>
+  <button class="pdf" id="pdf">PDF</button>
+</div></header>
+
+<main>
+<!-- HOME -->
+<section id="home" class="hero">
+  <div class="kicker">География · 1-топ</div>
+  <h1>УРБАНДАЛУ</h1>
+  <div class="sub"><p class="lead" style="margin:0">Заманауи үрдістер, мәселелер және шешімдер. Бес бағыт, бір тоғыс — қала.</p><a class="cta" href="#dengei">Бастау →</a></div>
+  <div class="map"><svg viewBox="0 0 1000 380" id="metro" aria-label="Тақырыптың метро-картасы"></svg></div>
+</section>
+
+<!-- 1 -->
+<section id="dengei" style="--c:#e5382a">
+  <div class="kicker"><b>1</b>Урбандалу деңгейі мен өсу қарқыны</div>
+  <h2>Әлем халқының 45%-ы ірі қалаларда тұрады</h2>
+  <p class="lead">Урбандалу деңгейі — елдегі барлық халықтың ішіндегі қала тұрғындарының пайыздық үлесі.</p>
+  <div class="cols">
+    <div class="box">
+      <h3>Әлем халқы қайда тұрады (БҰҰ, 2025)</h3>
+      <div class="split"><div style="width:45%;background:var(--red)"><b>45%</b>ірі қалалар</div><div style="width:35.5%;background:var(--blue)"><b>36%</b>шағын қалалар</div><div style="width:19.5%;background:var(--grn)"><b>20%</b>ауыл</div></div>
+      <p style="color:var(--mut);font-size:14px;margin:0">1950 жылы ірі қалаларда небәрі 20% тұрған.</p>
+      <h3 style="margin-top:20px">Деңгей мен қарқын</h3>
+      <div class="row"><div><span>Дамыған елдер: деңгей жоғары, өсу баяу</span><b>75–85%</b></div><div class="track"><div class="range" style="left:75%;right:15%;--c:#1d58d1"></div></div></div>
+      <div class="row"><div><span>Дамушы елдер: деңгей төмен, өсу жылдам</span><b>30–55%</b></div><div class="track"><div class="range" style="left:30%;right:45%;--c:#ffc21a"></div></div></div>
+      <div class="row"><div><span>Қазақстан, 1 қыркүйек 2026</span><b>64,2%</b></div><div class="track"><div class="fillbar" style="width:64.2%;--c:#e5382a"></div></div></div>
+    </div>
+    <div>
+      <div class="nums">
+        <div class="num"><div class="big">8,2<small>млрд</small></div><span>Әлем халқы, 2025</span></div>
+        <div class="num" style="--c:#1d58d1"><div class="big">64<small>%</small></div><span>Қазақстандағы қала халқы</span></div>
+        <div class="num" style="--c:#ffc21a"><div class="big">+52<small>мың</small></div><span>Астанаға көшкендер (сальдо), 2026 ж. 9 ай</span></div>
+      </div>
+      <div class="box fill" style="margin-top:16px;--c:#121212">
+        <h3>Неге дамушы елдерде қала тез өседі?</h3>
+        <ul class="stops" style="--c:#ffc21a"><li>Ауылдан қалаға жаппай көші-қон</li><li>Табиғи өсімнің жоғары болуы</li><li>Жұмыс пен оқу: Қазақстанда көшудің басты себептері — жұмыс (24,7%) және оқуға түсу (23,6%)</li></ul>
+      </div>
+    </div>
+  </div>
+  <p class="src">Дереккөздер: БҰҰ World Urbanization Prospects 2025; Ұлттық статистика бюросы (Kapital.kz); Zakon.kz; Nur.kz. Дамыған/дамушы елдер аралықтары — оқулықтағы жалпы мәндер.</p>
+</section>
+
+<!-- 2 -->
+<section id="aglo" style="--c:#1d58d1">
+  <div class="kicker"><b>2</b>Ірі агломерациялар мен мегалополистер</div>
+  <h2>Джакарта Токионы басып озды</h2>
+  <p class="lead">Агломерация — орталық қала мен оның маңындағы қалалар, кенттер мен ауылдардың ортақ көлік, еңбек және экономика жүйесіне бірігуі.</p>
+  <div class="aw">
+  <div class="cols">
+    <div class="box">
+      <h3>Әлемнің ең ірі 5 агломерациясы, млн адам</h3>
+      <div id="top5"></div>
+      <p style="color:var(--mut);font-size:14px;margin:6px 0 0">2050 жылға қарай бірінші орынға Дакка шығады деп болжанады (52 млн).</p>
+    </div>
+    <div class="box chart">
+      <h3>Агломерация схемасы</h3>
+      <svg viewBox="0 0 420 250" aria-label="Агломерация схемасы">
+        <circle cx="210" cy="125" r="112" fill="#e8eefc" stroke="#1d58d1" stroke-width="2" stroke-dasharray="8 6"/>
+        <g stroke="#121212" stroke-width="5" stroke-linecap="round"><path d="M210 125 95 62M210 125 335 58M210 125 88 195M210 125 330 200"/></g>
+        <circle cx="210" cy="125" r="42" fill="#1d58d1" stroke="#121212" stroke-width="3"/><text x="210" y="121" text-anchor="middle" font-family="Montserrat" font-weight="900" font-size="13" fill="#fff">ОРТАЛЫҚ</text><text x="210" y="137" text-anchor="middle" font-family="Montserrat" font-weight="900" font-size="13" fill="#fff">ҚАЛА</text>
+        <g fill="#fff" stroke="#121212" stroke-width="4"><circle cx="95" cy="62" r="16"/><circle cx="335" cy="58" r="13"/><circle cx="88" cy="195" r="12"/><circle cx="330" cy="200" r="16"/></g>
+        <g font-family="Inter" font-size="13" font-weight="600" fill="#121212" text-anchor="middle"><text x="95" y="96">қала-серік</text><text x="335" y="88">кент</text><text x="88" y="225">ауыл</text><text x="330" y="234">қала-серік</text></g>
+      </svg>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="box"><h3>Қазақстанның үш агломерациясы</h3>
+      <div class="nums" style="margin-top:12px">
+        <div class="num" style="--c:#1d58d1"><div class="big">1,69<small>млн</small></div><span>Астана халқы, 1 тамыз 2026</span></div>
+        <div class="num" style="--c:#e5382a"><div class="big">7,2<small>%</small></div><span>Астананың өсімі. Алматы — 2,5%, Шымкент — 3%</span></div>
+      </div>
+      <ul class="stops" style="--c:#1d58d1"><li><b>Алматы</b>: ең ірі қала</li><li><b>Астана</b>: ең жылдам өсіп келе жатқан қала</li><li><b>Шымкент</b>: оңтүстіктің орталығы</li></ul>
+    </div>
+    <div class="box"><h3>Мегалополистер — ұласып кеткен агломерациялар</h3><ul class="stops" id="mega" style="--c:#ffc21a"></ul></div>
+  </div>
+  </div>
+  <p class="src">Дереккөздер: БҰҰ World Urbanization Prospects 2025 (Destatis); Kazinform (Астана статистика департаменті); about-kazakhstan.com (ҰСБ).</p>
+</section>
+
+<!-- 3 -->
+<section id="urdis" style="--c:#7a3fc4">
+  <div class="kicker"><b>3</b>Урбандалу үрдістері</div>
+  <h2>Үш үрдіс: дамыған және дамушы елдер</h2>
+  <div class="cards3" id="trends"></div>
+</section>
+
+<!-- 4 -->
+<section id="masele" style="--c:#e5382a">
+  <div class="kicker"><b>4</b>Урбандалудың негізгі мәселелері</div>
+  <h2>Қала тез өссе, не болады?</h2>
+  <div class="cards3">
+    <div class="pcard" style="--c:#e5382a"><span class="tag">01</span><h3>Инфрақұрылым тапшылығы</h3><p>Тұрғын үй, мектеп, аурухана, су және электр желілеріне түсетін жүктеме шамадан тыс артады.</p></div>
+    <div class="pcard" style="--c:#ffc21a;"><span class="tag" style="color:#121212">02</span><h3>Көлік кептелісі</h3><p>Жеке көліктер көбейеді. Таңертең және кешке маятниктік көші-қон жолдарды бітейді.</p></div>
+    <div class="pcard" style="--c:#7a3fc4"><span class="tag">03</span><h3>Экология</h3><p>Ауа ластанады, қоқыс көбейеді, жасыл желек азаяды, «жылу аралы» әсері күшейеді.</p></div>
+  </div>
+  <div class="cols">
+    <div class="box chart"><h3>«Жылу аралы»</h3>
+      <svg viewBox="0 0 480 220" aria-label="Жылу аралы графигі">
+        <g fill="#121212"><rect x="30" y="150" width="40" height="14"/><rect x="118" y="128" width="22" height="36"/><rect x="146" y="116" width="20" height="48"/><rect x="198" y="84" width="24" height="80"/><rect x="228" y="68" width="22" height="96"/><rect x="256" y="90" width="22" height="74"/><rect x="380" y="128" width="24" height="36"/><rect x="420" y="150" width="30" height="14"/></g>
+        <circle cx="322" cy="152" r="13" fill="#159a5b"/><circle cx="342" cy="150" r="11" fill="#159a5b"/>
+        <rect x="0" y="164" width="480" height="4" fill="#121212"/>
+        <path d="M20 128 C90 128 110 110 150 92 S210 38 240 38 S300 64 322 100 S342 82 362 86 S420 128 460 128" fill="none" stroke="#e5382a" stroke-width="5" stroke-linecap="round"/>
+        <g font-family="Inter" font-size="12" font-weight="600" fill="#121212" text-anchor="middle"><text x="50" y="190">Ауыл</text><text x="146" y="190">Қала маңы</text><text x="240" y="190">Орталық</text><text x="333" y="190">Саябақ</text><text x="435" y="190">Ауыл</text></g>
+        <text x="240" y="24" text-anchor="middle" font-family="Montserrat" font-weight="900" font-size="15" fill="#e5382a">ең ыстық</text>
+        <text x="20" y="212" font-family="Inter" font-size="11" fill="#5b5b5b">Қызыл сызық — температура (схема)</text>
+      </svg>
+    </div>
+    <div class="box chart"><h3>Маятниктік көші-қон</h3>
+      <svg viewBox="0 0 480 220" aria-label="Маятниктік көші-қон">
+        <g stroke-width="6" fill="none" stroke-linecap="round"><path d="M80 60 200 100M80 165 200 125M400 60 280 100M400 165 280 125" stroke="#ffc21a"/></g>
+        <circle cx="240" cy="112" r="48" fill="#e5382a" stroke="#121212" stroke-width="3"/><text x="240" y="118" text-anchor="middle" font-family="Montserrat" font-weight="900" font-size="15" fill="#fff">ОРТАЛЫҚ</text>
+        <g fill="#fff" stroke="#121212" stroke-width="4"><circle cx="70" cy="56" r="22"/><circle cx="70" cy="168" r="22"/><circle cx="410" cy="56" r="22"/><circle cx="410" cy="168" r="22"/></g>
+        <g font-family="Inter" font-size="11" font-weight="600" fill="#121212" text-anchor="middle"><text x="70" y="60">маңы</text><text x="70" y="172">маңы</text><text x="410" y="60">маңы</text><text x="410" y="172">маңы</text></g>
+        <text x="240" y="210" text-anchor="middle" font-family="Inter" font-size="13" fill="#121212">Таңертең — орталыққа жұмысқа, кешке — үйге</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="shesh" style="--c:#159a5b">
+  <div class="kicker"><b>5</b>Шешу жолдары және «Ақылды қала»</div>
+  <h2>Мақсат — үлкен емес, жайлы қала</h2>
+  <div class="cards3">
+    <div class="pcard" style="--c:#1d58d1"><span class="tag">Көлік</span><h3>Полицентрлік қала</h3><p>Қаланы бір емес, бірнеше орталыққа бөліп дамыту. Метро мен BRT-ге басымдық беру, веложолдар салу.</p></div>
+    <div class="pcard" style="--c:#159a5b"><span class="tag">Экология</span><h3>Жасыл қала</h3><p>Жасыл белдеулерді кеңейту, қоқысты сұрыптап қайта өңдеу, экологиялық таза көлікке көшу.</p></div>
+    <div class="pcard" style="--c:#7a3fc4"><span class="tag">Smart City</span><h3>Ақылды қала</h3><p>Цифрлық технологиялар мен IoT арқылы қаланы тиімді басқару.</p></div>
+  </div>
+  <div class="box chart" style="margin-top:16px"><h3>«Ақылды қала» қалай жұмыс істейді</h3><svg viewBox="0 0 1000 150" id="smart" aria-label="Ақылды қала схемасы"></svg></div>
+  <div class="final"><b>Қорытынды.</b> Урбандалу — тоқтатуға болмайтын жаһандық процесс. Басты мақсат — қаланы тек үлкейту емес, адамға жайлы, экологиялық таза әрі ақылды ету.</div>
+</section>
+
+<!-- GAMES -->
+<section id="oiyn">
+  <div class="kicker">Ойындар · әрқайсысы 3–5 минут</div>
+  <h2>Тексеріп көрейік!</h2>
+  <div class="gtabs" id="gtabs"><button data-g="g1" class="on">Викторина</button><button data-g="g2">Шын ба, жалған ба?</button><button data-g="g3">Сәйкестендір</button></div>
+  <div class="game on" id="g1"><div class="gbox">
+    <div class="ghead"><span id="qn"></span><span class="pill" id="qs">Ұпай: 0</span></div>
+    <div class="timer"><i id="qt"></i></div>
+    <div class="q" id="qq"></div><div class="opts" id="qo"></div>
+    <div class="msg" id="qm"></div><button class="cta" id="qnext" style="display:none;margin-top:12px">Келесі сұрақ</button>
+  </div></div>
+  <div class="game" id="g2"><div class="gbox">
+    <div class="ghead"><span>60 секундта неғұрлым көп дұрыс жауап</span><span class="pill" id="tfs">Ұпай: 0</span><span class="pill" id="tft">60 с</span></div>
+    <div class="stmt" id="tfq">«Бастау» батырмасын бас.</div>
+    <div class="tf"><button class="t" id="tfT">ШЫН</button><button class="f" id="tfF">ЖАЛҒАН</button></div>
+    <div class="msg" id="tfm"></div><button class="cta" id="tfgo" style="margin-top:12px">Бастау</button>
+  </div></div>
+  <div class="game" id="g3"><div class="gbox">
+    <div class="ghead"><span>Ұғымды бас, сосын оның анықтамасын бас</span><span class="pill" id="ms">0 / 6</span></div>
+    <div class="match"><div class="col" id="ml"></div><div class="col" id="mr"></div></div>
+    <div class="msg" id="mm"></div><button class="cta ghost" id="mreset" style="margin-top:12px">Қайта бастау</button>
+  </div></div>
+</section>
+</main>
+
+<div class="pager"><button id="prev" aria-label="Алдыңғы бет"><svg viewBox="0 0 20 20"><path d="M12 4 6 10l6 6" stroke="currentColor" stroke-width="2.6" fill="none"/></svg></button><button id="next" aria-label="Келесі бет"><svg viewBox="0 0 20 20"><path d="m8 4 6 6-6 6" stroke="currentColor" stroke-width="2.6" fill="none"/></svg></button></div>
+<div class="toast" id="toast">Бұл терезеде басып шығару жабық. Сайтты GitHub-тан ашып, PDF батырмасын бас.</div>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const pages=['home','dengei','aglo','urdis','masele','shesh','oiyn'];
+const show=()=>{const h=location.hash.slice(1);const id=pages.includes(h)?h:'home';
+  pages.forEach(p=>$(p).classList.toggle('on',p===id));
+  document.querySelectorAll('#nav a').forEach(a=>{const on=a.getAttribute('href')==='#'+id;a.classList.toggle('on',on);if(on){const n=$('nav');n.scrollLeft=a.offsetLeft-n.clientWidth/2+a.offsetWidth/2}});
+  window.scrollTo(0,0)};
+const go=d=>{let i=pages.indexOf(location.hash.slice(1));if(i<0)i=0;i=Math.max(0,Math.min(pages.length-1,i+d));location.hash=pages[i]};
+window.addEventListener('hashchange',show);show();
+$('prev').onclick=()=>go(-1);$('next').onclick=()=>go(1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1)});
+$('pdf').onclick=()=>{try{window.print()}catch(e){$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',4000)}};
+const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+
+// metro map
+const L=[
+ ['#e5382a','M40 300 H300 Q340 300 360 260 L460 190 H500','1 · Деңгей',[[120,300],[220,300]],'Деңгей мен қарқын'],
+ ['#1d58d1','M500 190 H560 L700 70 H960','2 · Агломерация',[[760,70],[900,70]],'Агломерация'],
+ ['#7a3fc4','M40 60 H300 L430 190 H500','3 · Үрдістер',[[110,60],[260,60]],'Үрдістер'],
+ ['#ffc21a','M500 190 L600 290 H960','4 · Мәселелер',[[760,290],[870,290]],'Мәселелер'],
+ ['#159a5b','M500 190 V350','5 · Шешімдер',[[500,300]],'Шешімдер']];
+const hrefs=['#dengei','#aglo','#urdis','#masele','#shesh'];
+$('metro').innerHTML=`<rect width="1000" height="380" fill="#fff"/>
+<g opacity=".07" stroke="#121212">${Array.from({length:20},(_,i)=>`<path d="M${i*50} 0V380"/>`).join('')}${Array.from({length:8},(_,i)=>`<path d="M0 ${i*50}H1000"/>`).join('')}</g>
+${L.map((l,i)=>`<a href="${hrefs[i]}"><path d="${l[1]}" fill="none" stroke="${l[0]}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="${l[1]}" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="6 34" class="trainmv" opacity=".9"/>
+${l[3].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="11" fill="#fff" stroke="#121212" stroke-width="5"/>`).join('')}</a>`).join('')}
+<g font-family="Montserrat" font-weight="800" font-size="17" fill="#121212">
+<text x="120" y="338" text-anchor="middle">Деңгей</text><text x="220" y="338" text-anchor="middle">Қарқын</text>
+<text x="110" y="38" text-anchor="middle">Субурбандалу</text><text x="260" y="104" text-anchor="middle">Рурбандалу</text>
+<text x="760" y="48" text-anchor="middle">Агломерация</text><text x="900" y="112" text-anchor="middle">Мегалополис</text>
+<text x="760" y="328" text-anchor="middle">Кептеліс</text><text x="870" y="328" text-anchor="middle">Жылу аралы</text>
+<text x="520" y="306">Ақылды қала</text></g>
+<circle cx="500" cy="190" r="40" fill="#fff" stroke="#121212" stroke-width="8"/>
+<text x="500" y="196" text-anchor="middle" font-family="Montserrat" font-weight="900" font-size="16" fill="#121212">ҚАЛА</text>`;
+
+// agglomerations
+const T5=[['Джакарта (Индонезия)',41.9],['Дакка (Бангладеш)',36.6],['Токио (Жапония)',33.4],['Дели (Үндістан)',30.2],['Шанхай (Қытай)',29.6]];
+$('top5').innerHTML=T5.map((t,i)=>`<div class="row"><div><span>${i+1}. ${t[0]}</span><b>${String(t[1]).replace('.',',')}</b></div><div class="track"><div class="fillbar" style="width:${t[1]/42*100}%;--c:${i?'#1d58d1':'#e5382a'}"></div></div></div>`).join('');
+$('mega').innerHTML=[['Босваш (АҚШ)','Бостон – Нью-Йорк – Вашингтон'],['Чипиттс (АҚШ)','Чикаго – Питтсбург'],['Сансан (АҚШ)','Сан-Франциско – Сан-Диего'],['Токайдо (Жапония)','Токио – Нагоя – Осака']].map(m=>`<li><b>${m[0]}</b><br>${m[1]}</li>`).join('');
+
+// trends
+const pic={
+ sub:`<svg viewBox="0 0 300 130"><g fill="#121212"><rect x="122" y="30" width="20" height="80"/><rect x="146" y="15" width="22" height="95"/><rect x="172" y="45" width="18" height="65"/></g><g fill="#7a3fc4"><path d="M25 110v-18l12-10 12 10v18z"/><path d="M58 110v-16l10-9 10 9v16z"/><path d="M228 110v-18l12-10 12 10v18z"/><path d="M262 110v-16l10-9 10 9v16z"/></g><path d="M115 70 86 82M197 70 226 82" stroke="#e5382a" stroke-width="5" stroke-linecap="round"/><rect y="110" width="300" height="20" fill="#121212"/></svg>`,
+ rur:`<svg viewBox="0 0 300 130"><g fill="#7a3fc4"><path d="M55 110v-24l18-14 18 14v24z"/><path d="M175 110v-24l18-14 18 14v24z"/></g><path d="M245 110V40" stroke="#121212" stroke-width="4"/><path d="M233 52a17 17 0 0 1 24 0M227 44a26 26 0 0 1 36 0" stroke="#1d58d1" stroke-width="4" fill="none"/><rect x="108" y="92" width="42" height="14" rx="4" fill="#ffc21a" stroke="#121212" stroke-width="2"/><rect y="110" width="300" height="20" fill="#121212"/></svg>`,
+ fake:`<svg viewBox="0 0 300 130"><g fill="#121212"><rect x="208" y="22" width="22" height="88"/><rect x="236" y="42" width="22" height="68"/></g><g fill="#e5382a"><rect x="24" y="90" width="26" height="20"/><rect x="54" y="86" width="22" height="24"/><rect x="80" y="92" width="30" height="18"/><rect x="114" y="88" width="24" height="22"/><rect x="142" y="94" width="26" height="16"/></g><text x="96" y="70" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e5382a">инфрақұрылымсыз</text><rect y="110" width="300" height="20" fill="#121212"/></svg>`};
+const TR=[['sub','#7a3fc4','Субурбандалу','Халықтың қала орталығынан қала маңына көшуі.','Тыныш, таза ортада тұру үшін қала сыртына көшу','Қала шетіндегі стихиялы қоныстар'],
+ ['rur','#1d58d1','Рурбандалу','Қалалық өмір салты мен инфрақұрылымның ауылға таралуы.','Интернет, көлік, қызмет арқасында ауыл мен қала теңеседі','Баяу жүреді, инфрақұрылым жетіспейді'],
+ ['fake','#e5382a','Жалған урбандалу','Қала жұмыс орындары есебінен емес, ауылдағы кедейліктен қашқан халық есебінен өседі.','Тән емес','Кедей аудандар мен инфрақұрылымы жоқ қоныстар көбейеді']];
+$('trends').innerHTML=TR.map(t=>`<div class="tcard" style="--c:${t[1]}"><div class="hd"><h3>${t[2]}</h3><p>${t[3]}</p></div>${pic[t[0]]}<div class="vs"><div><b>Дамыған елдер</b>${t[4]}</div><div><b>Дамушы елдер</b>${t[5]}</div></div></div>`).join('');
+
+// smart city
+const SM=[['Сенсорлар','ауа, көлік ағыны','#ffc21a'],['Деректер','қалалық платформа','#1d58d1'],['Талдау','жасанды интеллект','#7a3fc4'],['Әрекет','ақылды бағдаршам','#e5382a'],['Тұрғын','цифрлық сервистер','#159a5b']];
+$('smart').innerHTML=`<path d="M60 75H940" stroke="#121212" stroke-width="10" stroke-linecap="round"/>`+SM.map((s,i)=>{const x=100+i*200;return `<circle cx="${x}" cy="75" r="22" fill="#fff" stroke="${s[2]}" stroke-width="9"/><text x="${x}" y="30" text-anchor="middle" font-family="Montserrat" font-weight="900" font-size="18" fill="#121212">${s[0]}</text><text x="${x}" y="128" text-anchor="middle" font-family="Inter" font-size="14" fill="#5b5b5b">${s[1]}</text>`}).join('');
+
+// game tabs
+document.querySelectorAll('#gtabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#gtabs button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.game').forEach(g=>g.classList.toggle('on',g.id===b.dataset.g))});
+
+// quiz
+const Q=[['Урбандалу деңгейі дегеніміз не?',['Қалалар саны','Қала халқының жалпы халықтағы пайыздық үлесі','Қаланың ауданы','Қаладағы көліктер саны'],1],
+ ['БҰҰ-ның 2025 жылғы есебі бойынша әлемнің ең ірі қаласы?',['Токио','Шанхай','Джакарта','Нью-Йорк'],2],
+ ['Қала халқы қай елдерде жылдамырақ өседі?',['Дамыған елдерде','Дамушы елдерде','Барлық жерде бірдей','Ешқайда өспейді'],1],
+ ['Босваш мегалополисі қай елде?',['Жапония','Қытай','АҚШ','Германия'],2],
+ ['Халықтың қала маңына көшуі қалай аталады?',['Рурбандалу','Субурбандалу','Жалған урбандалу','Агломерация'],1],
+ ['Жалған урбандалу неге байланысты?',['Зауыттардың көбеюі','Ауылдағы кедейлік пен жұмыссыздық','Метро салу','Туризм'],1],
+ ['Қала орталығында температураның көтерілуі қалай аталады?',['Жылу аралы','Смог','Инверсия','Мұздық'],0],
+ ['Қаланы бірнеше орталыққа бөліп дамыту қалай аталады?',['Субурбандалу','Полицентрлік жоспарлау','Мегалополис','Рурбандалу'],1]];
+let qi=0,qsc=0,qtm=null,qleft=0;
+const qRender=()=>{if(qi>=Q.length){clearInterval(qtm);$('qn').textContent='Аяқталды';$('qq').textContent=`Нәтиже: ${qsc} / ${Q.length}`;$('qo').innerHTML='';$('qt').style.width='0';$('qm').style.color='var(--ink)';$('qm').textContent=qsc>=7?'Керемет!':qsc>=5?'Жақсы нәтиже!':'Тағы бір рет көріңдер.';$('qnext').textContent='Қайта ойнау';$('qnext').style.display='inline-flex';return}
+  const [t,o]=Q[qi];$('qn').textContent=`Сұрақ ${qi+1}/${Q.length}`;$('qq').textContent=t;$('qm').textContent='';$('qnext').style.display='none';
+  $('qo').innerHTML=o.map((x,i)=>`<button class="opt" data-i="${i}">${x}</button>`).join('');
+  qleft=20;$('qt').style.width='100%';clearInterval(qtm);qtm=setInterval(()=>{qleft--;$('qt').style.width=(qleft/20*100)+'%';if(qleft<=0)qAnswer(-1)},1000)};
+const qAnswer=i=>{clearInterval(qtm);const c=Q[qi][2];document.querySelectorAll('#qo .opt').forEach((b,k)=>{b.disabled=true;if(k===c)b.classList.add('good');else if(k===i)b.classList.add('wrong')});
+  if(i===c){qsc++;$('qm').textContent='Дұрыс!';$('qm').style.color='var(--ok)'}else{$('qm').textContent=i<0?'Уақыт бітті!':'Қате.';$('qm').style.color='var(--bad)'}
+  $('qs').textContent='Ұпай: '+qsc;$('qnext').textContent=qi===Q.length-1?'Нәтижені көру':'Келесі сұрақ';$('qnext').style.display='inline-flex'};
+$('qo').onclick=e=>{const b=e.target.closest('.opt');if(b&&!b.disabled)qAnswer(+b.dataset.i)};
+$('qnext').onclick=()=>{if(qi>=Q.length){qi=0;qsc=0;$('qs').textContent='Ұпай: 0'}else qi++;qRender()};qRender();
+
+// true/false
+const S=[['Қазақстан халқының жартысынан көбі қалада тұрады.',1],['Дамыған елдерде қала халқы өте жылдам өседі.',0],['Токайдо мегалополисі Жапонияда орналасқан.',1],['Рурбандалу — қалалық өмір салтының ауылға таралуы.',1],['Жалған урбандалу дамыған елдерге тән.',0],['Саябақтар «жылу аралы» әсерін күшейтеді.',0],['Агломерация — орталық қала мен оның маңындағы елді мекендердің бірігуі.',1],['Маятниктік көші-қон — таңертең орталыққа, кешке үйге қатынау.',1],['Ақылды бағдаршамдар кептелісті көбейтеді.',0],['2026 жылы Астана халқы Алматыға қарағанда жылдамырақ өсті.',1],['1950 жылы әлем халқының жартысы ірі қалаларда тұрған.',0],['BRT — жедел автобус қатынасы.',1]];
+let tfOn=false,tfI=0,tfSc=0,tfLeft=60,tfTm=null,tfOrder=[];
+const tfNext=()=>{if(tfI>=tfOrder.length){tfOrder=shuffle(tfOrder);tfI=0}$('tfq').textContent=S[tfOrder[tfI]][0]};
+const tfEnd=()=>{tfOn=false;clearInterval(tfTm);$('tfq').textContent=`Уақыт бітті! Дұрыс жауап: ${tfSc}`;$('tfgo').style.display='inline-flex';$('tfgo').textContent='Қайта ойнау'};
+$('tfgo').onclick=()=>{tfOn=true;tfSc=0;tfLeft=60;tfI=0;tfOrder=shuffle(S.map((_,i)=>i));$('tfs').textContent='Ұпай: 0';$('tft').textContent='60 с';$('tfm').textContent='';$('tfgo').style.display='none';tfNext();clearInterval(tfTm);tfTm=setInterval(()=>{tfLeft--;$('tft').textContent=tfLeft+' с';if(tfLeft<=0)tfEnd()},1000)};
+const tfAns=v=>{if(!tfOn)return;const ok=S[tfOrder[tfI]][1]===v;if(ok)tfSc++;$('tfs').textContent='Ұпай: '+tfSc;$('tfm').textContent=ok?'Дұрыс!':'Қате!';$('tfm').style.color=ok?'var(--ok)':'var(--bad)';tfI++;tfNext()};
+$('tfT').onclick=()=>tfAns(1);$('tfF').onclick=()=>tfAns(0);
+
+// match
+const MP=[['Урбандалу деңгейі','Қала халқының жалпы халықтағы үлесі'],['Агломерация','Орталық қала мен маңындағы елді мекендердің бірігуі'],['Мегалополис','Бірнеше агломерацияның ұласып кетуі'],['Субурбандалу','Халықтың қала маңына көшуі'],['Рурбандалу','Қалалық өмір салтының ауылға таралуы'],['Жалған урбандалу','Кедейліктен қашқан халық есебінен қаланың өсуі']];
+let sel=null,done=0;
+const mRender=()=>{sel=null;done=0;$('ms').textContent='0 / 6';$('mm').textContent='';
+  $('ml').innerHTML=shuffle(MP.map((_,i)=>i)).map(i=>`<button class="mi" data-i="${i}">${MP[i][0]}</button>`).join('');
+  $('mr').innerHTML=shuffle(MP.map((_,i)=>i)).map(i=>`<button class="mi" data-i="${i}">${MP[i][1]}</button>`).join('')};
+$('ml').onclick=e=>{const b=e.target.closest('.mi');if(!b||b.classList.contains('done'))return;document.querySelectorAll('#ml .mi').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');sel=b};
+$('mr').onclick=e=>{const b=e.target.closest('.mi');if(!b||b.classList.contains('done'))return;if(!sel){$('mm').textContent='Алдымен сол жақтан ұғымды таңда.';$('mm').style.color='var(--ink)';return}
+  if(b.dataset.i===sel.dataset.i){b.classList.add('done');sel.classList.remove('sel');sel.classList.add('done');sel=null;done++;$('ms').textContent=done+' / 6';$('mm').textContent=done===6?'Барлығы дұрыс!':'Дұрыс!';$('mm').style.color='var(--ok)'}
+  else{b.classList.add('err');setTimeout(()=>b.classList.remove('err'),600);$('mm').textContent='Қате, қайта көр.';$('mm').style.color='var(--bad)'}};
+$('mreset').onclick=mRender;mRender();
+}
+</script>
+</body>
+</html>
